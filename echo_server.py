@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import socket
 import time
+from multiprocessing import Process
+import multiprocessing
 
 #define address & buffer size
 HOST = ""
@@ -12,7 +14,7 @@ def main():
     
         #QUESTION 3
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
         #bind socket to address
         s.bind((HOST, PORT))
         #set to listening mode
@@ -32,4 +34,6 @@ def main():
             conn.close()
 
 if __name__ == "__main__":
-    main()
+    p = Process(target=main)
+    p.start()
+    p.join()

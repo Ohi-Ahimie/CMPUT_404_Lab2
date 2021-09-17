@@ -1,5 +1,7 @@
 import socket
 import time
+from multiprocessing import Process
+import multiprocessing
 
 #define address & buffer size
 HOST = ""
@@ -8,11 +10,12 @@ BUFFER_SIZE = 1024
 
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
         gdata = b''
 
         try:
             gs = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            gs.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
             gs.connect((socket.gethostbyname('www.google.com'), 80))
             # payload = 'GET / HTTP/1.0\r\nHost: www.google.com\r\n\r\n'
             # gs.sendall(payload.encode())
@@ -45,4 +48,6 @@ def main():
             conn.close()
 
 if __name__ == "__main__":
-    main()
+    p = Process(target=main)
+    p.start()
+    p.join()
